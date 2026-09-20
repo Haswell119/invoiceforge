@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Late Fee Calculator — Invoice Late Payment Interest</title>
+<meta name="description" content="Free late fee calculator: work out interest on an overdue invoice by annual rate and days late, or apply a flat late fee. Shows the total owed and a ready-to-use late fee clause.">
+<link rel="canonical" href="https://haswell119.github.io/invoiceforge/late-fee-calculator.html">
+<meta name="robots" content="index, follow">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Late Fee Calculator — Invoice Late Payment Interest">
+<meta property="og:description" content="Free late fee calculator: work out interest on an overdue invoice by annual rate and days late, or apply a flat late fee. Shows the total owed and a ready-to-use late fee clause.">
+<meta property="og:url" content="https://haswell119.github.io/invoiceforge/late-fee-calculator.html">
+<style>
+  :root { --ink: #111827; --accent: #2563eb; --muted: #4b5563; --line: #e5e7eb; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 0; background: #ffffff; color: #111827;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 17px; line-height: 1.65; -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 48px 24px 72px; }
+  .brand { font-size: 15px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 40px; }
+  .brand a { color: #2563eb; text-decoration: none; }
+  h1 { font-size: 34px; line-height: 1.25; letter-spacing: -0.02em; margin: 0 0 16px; color: #111827; }
+  h2 { font-size: 23px; line-height: 1.3; letter-spacing: -0.01em; margin: 40px 0 12px; color: #111827; }
+  h3 { font-size: 18px; margin: 26px 0 8px; color: #111827; }
+  p { margin: 0 0 18px; }
+  ul, ol { margin: 0 0 18px; padding-left: 22px; }
+  li { margin-bottom: 8px; }
+  a { color: #2563eb; text-decoration: underline; text-underline-offset: 2px; }
+  .lede { font-size: 19px; color: #4b5563; margin-bottom: 28px; }
+  .meta { font-size: 14px; color: #4b5563; margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid #e5e7eb; }
+  .cta {
+    margin: 44px 0 0; padding: 26px 26px 24px; border: 1px solid #e5e7eb;
+    border-left: 4px solid #2563eb; border-radius: 8px; background: #f9fafb;
+  }
+  .cta h2 { margin: 0 0 8px; font-size: 20px; }
+  .cta p { margin: 0 0 14px; font-size: 16px; color: #4b5563; }
+  .cta a.btn {
+    display: inline-block; background: #2563eb; color: #ffffff; text-decoration: none;
+    padding: 11px 20px; border-radius: 6px; font-weight: 600; font-size: 15px;
+  }
+  .cta a.pro { color: #2563eb; font-size: 15px; }
+  .note { font-size: 14px; color: #4b5563; border-top: 1px solid #e5e7eb; margin-top: 40px; padding-top: 20px; }
+  code, pre { background: #f3f4f6; border-radius: 6px; font-size: 15px; }
+  code { padding: 2px 5px; }
+  pre { padding: 14px; overflow-x: auto; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 14px; }
+  table { width: 100%; border-collapse: collapse; margin: 0 0 20px; font-size: 15px; }
+  th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid #e5e7eb; vertical-align: top; }
+  th { background: #f9fafb; font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: #4b5563; }
+  footer { margin-top: 48px; font-size: 14px; color: #4b5563; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:10px; padding:24px; margin-bottom:20px; }
+  .card h2 { font-size:1.05rem; margin-bottom:14px; }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  @media (max-width:560px){ .grid { grid-template-columns:1fr; } }
+  label { display:block; font-size:.8rem; color:var(--muted); margin-bottom:4px; }
+  input, select { width:100%; padding:9px 10px; border:1px solid var(--line); border-radius:6px; font-size:.95rem; background:#fff; }
+  .result { background:#f0f6ff; border:1px solid #bfdbfe; border-radius:8px; padding:16px; margin-top:14px; }
+  .result .big { font-size:1.3rem; font-weight:700; }
+  .result .row { display:flex; justify-content:space-between; padding:5px 0; font-size:.92rem; }
+  .result .row span:last-child { font-weight:600; }
+  .note2 { font-size:.75rem; color:var(--muted); margin-top:10px; }
+  .cta-btn { display:block; text-align:center; margin:24px 0 8px; background:var(--accent); color:#fff; padding:14px; border-radius:8px; text-decoration:none; font-weight:600; }
+  .cta-btn:hover { background:#1d4ed8; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand"><a href="/invoiceforge/">InvoiceForge</a> &mdash; free invoice generator</div>
+  <h1>Late fee calculator</h1>
+  <div class="lede">What is an overdue invoice actually worth? Enter the amount, your annual interest rate and how late the payment is. Free, no signup, nothing stored.</div>
+
+  <div class="card">
+    <h2>1. Interest on an overdue invoice</h2>
+    <div class="grid">
+      <div>
+        <label>Invoice amount</label>
+        <input id="amount" type="number" min="0" step="0.01" value="2500">
+      </div>
+      <div>
+        <label>Annual interest rate %</label>
+        <input id="rate" type="number" min="0" step="0.1" value="8">
+      </div>
+      <div>
+        <label>Days overdue</label>
+        <input id="overdue" type="number" min="0" step="1" value="30">
+      </div>
+      <div>
+        <label>Day-count basis</label>
+        <select id="basis">
+          <option value="365" selected>365 days (calendar year)</option>
+          <option value="360">360 days (commercial year)</option>
+        </select>
+      </div>
+    </div>
+    <div class="result" id="interestResult"></div>
+    <div class="note2">Simple interest on the outstanding amount. Compounding, statutory minimums and whether a late fee is enforceable depend on your contract and local law &mdash; this is a calculator, not legal advice.</div>
+  </div>
+
+  <div class="card">
+    <h2>2. Flat late fee</h2>
+    <div class="grid">
+      <div>
+        <label>Invoice amount</label>
+        <input id="famount" type="number" min="0" step="0.01" value="2500">
+      </div>
+      <div>
+        <label>Late fee</label>
+        <input id="fmode" type="text" value="5" style="display:none">
+        <select id="ftype">
+          <option value="pct" selected>Percentage of invoice</option>
+          <option value="flat">Fixed amount</option>
+        </select>
+      </div>
+      <div>
+        <label>Value (% or amount)</label>
+        <input id="fval" type="number" min="0" step="0.01" value="5">
+      </div>
+    </div>
+    <div class="result" id="flatResult"></div>
+    <div class="note2">Flat late fees are common on freelancer contracts (typically 1&ndash;5% of the invoice, or a fixed $25&ndash;$50). A fee introduced for the first time on an overdue invoice is a negotiation, not a term &mdash; put it in the contract.</div>
+  </div>
+
+  <div class="card">
+    <h2>3. Late fee clause you can paste into a contract</h2>
+    <pre id="clause"></pre>
+  </div>
+
+    <div class="cta">
+      <h2>Now generate the invoice itself</h2>
+      <p>InvoiceForge builds the invoice, the totals and the PDF in your browser. Free, no account, and it takes about a minute.</p>
+      <p><a class="btn" href="/invoiceforge/">Generate an invoice free</a></p>
+      <p style="margin-top:14px;font-size:15px;">Need saved invoices and no credit line on your PDFs? <a class="pro" href="https://buy.stripe.com/fZu28tfk486dcxC8hVgUM04" target="_blank" rel="noopener">InvoiceForge Pro is $19 once</a> — the free version keeps working forever.</p>
+    </div>
+
+    <footer>
+      <p><a href="/invoiceforge/blog/how-to-invoice-as-a-consultant.html">How to invoice as a consultant</a> &middot; <a href="/invoiceforge/blog/net-30-payment-terms.html">Net 30 payment terms explained</a> &middot; <a href="/invoiceforge/blog/payment-reminder-email-template.html">Payment reminder email templates</a> &middot; <a href="/invoiceforge/blog/invoice-vs-receipt.html">Invoice vs receipt</a> &middot; <a href="/invoiceforge/blog/what-to-include-on-an-invoice.html">What to include on an invoice</a> &middot; <a href="/invoiceforge/late-fee-calculator.html">Late fee calculator</a> &middot; <a href="/invoiceforge/freelance-hourly-rate-calculator.html">Freelance hourly rate calculator</a> &middot; <a href="/invoiceforge/blog/how-to-invoice-as-a-freelancer.html">How to invoice as a freelancer</a> &middot; <a href="/invoiceforge/due-date-calculator.html">Invoice due date calculator</a> &middot; <a href="/invoiceforge/templates/photographer-invoice-template.html">Photographer invoice template</a></p>
+    </footer>
+  <script>
+  function money(n) {
+    return n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 2 });
+  }
+  function calcInterest() {
+    var amt = parseFloat(document.getElementById("amount").value) || 0;
+    var rate = parseFloat(document.getElementById("rate").value) || 0;
+    var days = parseFloat(document.getElementById("overdue").value) || 0;
+    var basis = parseFloat(document.getElementById("basis").value) || 365;
+    var fee = amt * (rate / 100) * (days / basis);
+    var daily = amt * (rate / 100) / basis;
+    document.getElementById("interestResult").innerHTML =
+      '<div class="row"><span>Outstanding amount</span><span>' + money(amt) + '</span></div>' +
+      '<div class="row"><span>Annual rate</span><span>' + rate + '%</span></div>' +
+      '<div class="row"><span>Days overdue</span><span>' + days + ' days</span></div>' +
+      '<div class="row"><span>Interest per day</span><span>' + money(daily) + '</span></div>' +
+      '<div class="row"><span>Late-payment interest</span><span>' + money(fee) + '</span></div>' +
+      '<div class="row"><span>Total now owed</span><span class="big">' + money(amt + fee) + '</span></div>';
+  }
+  function calcFlat() {
+    var amt = parseFloat(document.getElementById("famount").value) || 0;
+    var type = document.getElementById("ftype").value;
+    var val = parseFloat(document.getElementById("fval").value) || 0;
+    var fee = type === "pct" ? amt * (val / 100) : val;
+    document.getElementById("flatResult").innerHTML =
+      '<div class="row"><span>Invoice amount</span><span>' + money(amt) + '</span></div>' +
+      '<div class="row"><span>Late fee (' + (type === "pct" ? val + '%' : "fixed") + ')</span><span>' + money(fee) + '</span></div>' +
+      '<div class="row"><span>Total now owed</span><span class="big">' + money(amt + fee) + '</span></div>';
+  }
+  function calcClause() {
+    var rate = parseFloat(document.getElementById("rate").value) || 0;
+    var basis = parseFloat(document.getElementById("basis").value) || 365;
+    document.getElementById("clause").textContent =
+      "Late payment: invoices are due within the agreed payment terms. " +
+      "Overdue amounts accrue interest at " + rate + "% per annum, calculated on a " + basis + "-day basis " +
+      "from the due date until payment is received in full. The client is responsible for any " +
+      "reasonable costs of recovering an unpaid invoice.";
+  }
+  function recalc() { calcInterest(); calcFlat(); calcClause(); }
+  ["amount", "rate", "overdue", "basis", "famount", "ftype", "fval"].forEach(function (id) {
+    document.getElementById(id).addEventListener("input", recalc);
+  });
+  recalc();
+  </script>
+
+</div>
+</body>
+</html>
