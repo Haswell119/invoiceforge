@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Invoice Generator With No Signup: Why It Matters, What to Check</title>
+<meta name="description" content="Why the no-signup, no-upload invoice generator matters for freelancers, what to check before you paste client details into any free tool, and how to produce a PDF invoice in a minute.">
+<link rel="canonical" href="https://haswell119.github.io/invoiceforge/blog/invoice-generator-with-no-signup.html">
+<style>
+  :root { --ink: #111827; --accent: #2563eb; --muted: #4b5563; --line: #e5e7eb; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 0; background: #ffffff; color: #111827;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 17px; line-height: 1.65; -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 48px 24px 72px; }
+  .brand { font-size: 15px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 40px; }
+  .brand a { color: #2563eb; text-decoration: none; }
+  h1 { font-size: 34px; line-height: 1.25; letter-spacing: -0.02em; margin: 0 0 16px; color: #111827; }
+  h2 { font-size: 23px; line-height: 1.3; letter-spacing: -0.01em; margin: 40px 0 12px; color: #111827; }
+  h3 { font-size: 18px; margin: 26px 0 8px; color: #111827; }
+  p { margin: 0 0 18px; }
+  ul, ol { margin: 0 0 18px; padding-left: 22px; }
+  li { margin-bottom: 8px; }
+  a { color: #2563eb; text-decoration: underline; text-underline-offset: 2px; }
+  .lede { font-size: 19px; color: #4b5563; margin-bottom: 28px; }
+  .meta { font-size: 14px; color: #4b5563; margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid #e5e7eb; }
+  table { width: 100%; border-collapse: collapse; margin: 0 0 24px; font-size: 16px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid #e5e7eb; vertical-align: top; }
+  th { background: #f9fafb; font-size: 14px; text-transform: uppercase; letter-spacing: 0.04em; color: #4b5563; }
+  .cta {
+    margin: 44px 0 0; padding: 26px 26px 24px; border: 1px solid #e5e7eb;
+    border-left: 4px solid #2563eb; border-radius: 8px; background: #f9fafb;
+  }
+  .cta h2 { margin: 0 0 8px; font-size: 20px; }
+  .cta p { margin: 0 0 14px; font-size: 16px; color: #4b5563; }
+  .cta a.btn {
+    display: inline-block; background: #2563eb; color: #ffffff; text-decoration: none;
+    padding: 11px 20px; border-radius: 6px; font-weight: 600; font-size: 15px;
+  }
+  .note { font-size: 14px; color: #4b5563; border-top: 1px solid #e5e7eb; margin-top: 40px; padding-top: 20px; }
+  code { background: #f3f4f6; padding: 2px 5px; border-radius: 4px; font-size: 15px; }
+  footer { margin-top: 48px; font-size: 14px; color: #4b5563; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="brand"><a href="https://haswell119.github.io/invoiceforge">InvoiceForge</a></div>
+
+  <article>
+    <h1>Invoice generator with no signup: why it matters, and what to check</h1>
+    <p class="meta">Accounts, uploads and watermarks: the three things to inspect before you type a client's details into a free invoice tool.</p>
+
+    <p class="lede">You need one invoice, today, for one client. The tool you picked wants an email address, a password, a company profile and a card number for the "free trial". By the time you have signed up, you have spent more time on the software than on the work you are billing for. That is the whole argument for a no-signup invoice generator — but there are three things worth checking before you trust any of them.</p>
+
+    <h2>1. Can you use it without creating an account?</h2>
+    <p>An account is not just a form. It is a decision about where your client's billing details, your rates and your revenue history are stored, and for how long. For a freelancer who invoices a handful of clients a month, the cost of that account — in time and in data — is usually higher than the value it returns.</p>
+    <p>The test is simple: open the tool in a private window. If you can enter your details, see the totals and get a PDF without an email confirmation step, it is genuinely account-free. If a signup modal appears the moment you click the primary button, it is not.</p>
+
+    <h2>2. Does the data leave your browser?</h2>
+    <p>"Free invoice generator" covers two very different architectures:</p>
+    <table>
+      <thead><tr><th>Architecture</th><th>What happens to your invoice</th><th>How to tell</th></tr></thead>
+      <tbody>
+        <tr><td>Client-side</td><td>Your business details, rates and client name stay in the page; the PDF is produced by your own browser's print engine.</td><td>The page keeps working with the network tab open and requests blocked after load. Nothing is uploaded when you hit print.</td></tr>
+        <tr><td>Server-side</td><td>The invoice is posted to a server, rendered there, and returned as a file — and is typically stored so you can "come back to it".</td><td>The print/save button triggers a network request, and the URL changes to something like <code>/invoice/8f3c…</code>.</td></tr>
+      </tbody>
+    </table>
+    <p>Neither is automatically wrong — a server-side tool with an account is a fine product if you want invoice history. But if you specifically want to avoid your rates and client list being stored by a third party you have no contract with, check which one you are using.</p>
+
+    <h2>3. What does "free" cost you?</h2>
+    <ul>
+      <li><strong>The watermark.</strong> Many free generators stamp the document with their own branding. That is a defensible business model, but on a client-facing invoice it is your credibility being spent. Know whether it applies to content or just to a corner mark.</li>
+      <li><strong>The client cap.</strong> "Free forever" often means three clients. Fine for a test, useless by month two.</li>
+      <li><strong>The upsell after the fact.</strong> A tool that lets you build the invoice and only then reveals the PDF is behind a paywall is a bad trade — the work is already done.</li>
+    </ul>
+    <p>A clean version of the model: free tool that produces a real invoice, with a modest one-time or subscription upgrade for the things that only matter when the tool becomes part of your routine (saved invoices, your own branding, templates). That is roughly what we do — free core, $19 one-time Pro — and if you would rather pay nothing ever, the free tier produces a complete invoice.</p>
+
+    <h2>What to check before you type anything in</h2>
+    <ol>
+      <li>Open it in a private window with no account — confirm no signup wall.</li>
+      <li>Watch the network panel as you print: one local render, or an upload?</li>
+      <li>Look at the output for a watermark and decide if you care on this document.</li>
+      <li>Check that it handles the fields you actually need: tax rate, currency, due date, PO reference. <a href="/invoiceforge/blog/free-invoice-template-for-freelancers.html">The field checklist is here.</a></li>
+      <li>Print to PDF once and check the totals against your own arithmetic. Any tool that gets tax wrong is not free, it is expensive.</li>
+    </ol>
+
+    <div class="cta">
+      <h2>Try the account-free route</h2>
+      <p>InvoiceForge runs entirely in your browser: business details, line items, tax, currency, print to PDF. No account, no upload, nothing stored. Free to use; $19 one-time Pro removes the credit line and adds saved invoices.</p>
+      <p><a class="btn" href="https://haswell119.github.io/invoiceforge">Open InvoiceForge</a></p>
+    </div>
+
+    <p class="note">General practice, not tax or legal advice. Invoice content requirements differ by country — see <a href="/invoiceforge/blog/how-to-invoice-as-a-freelancer.html">what to include on a freelancer invoice</a>.</p>
+  </article>
+
+  <footer>
+    <p><a href="https://haswell119.github.io/invoiceforge">InvoiceForge</a> — free online invoice generator, no signup required.</p>
+  </footer>
+
+</div>
+</body>
+</html>

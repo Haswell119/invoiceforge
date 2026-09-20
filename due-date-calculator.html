@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Invoice Due Date &amp; Late Fee Calculator — InvoiceForge</title>
+<meta name="description" content="Free calculator: work out an invoice due date from Net 7/14/30/60/90 terms and how much late-payment interest you can charge on an overdue invoice.">
+<style>
+  :root { --ink:#111827; --muted:#6b7280; --accent:#2563eb; --line:#e5e7eb; --bg:#f9fafb; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; background:var(--bg); color:var(--ink); line-height:1.55; }
+  .wrap { max-width:760px; margin:0 auto; padding:32px 20px 64px; }
+  h1 { font-size:1.6rem; margin-bottom:6px; }
+  .sub { color:var(--muted); margin-bottom:24px; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:10px; padding:24px; margin-bottom:20px; }
+  .card h2 { font-size:1.05rem; margin-bottom:14px; }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  @media (max-width:560px){ .grid { grid-template-columns:1fr; } }
+  label { display:block; font-size:.8rem; color:var(--muted); margin-bottom:4px; }
+  input, select { width:100%; padding:9px 10px; border:1px solid var(--line); border-radius:6px; font-size:.95rem; background:#fff; }
+  .result { background:#f0f6ff; border:1px solid #bfdbfe; border-radius:8px; padding:16px; margin-top:14px; }
+  .result .big { font-size:1.3rem; font-weight:700; }
+  .result .row { display:flex; justify-content:space-between; padding:5px 0; font-size:.92rem; }
+  .result .row span:last-child { font-weight:600; }
+  .note { font-size:.75rem; color:var(--muted); margin-top:10px; }
+  .cta { display:block; text-align:center; margin:24px 0 8px; background:var(--accent); color:#fff; padding:14px; border-radius:8px; text-decoration:none; font-weight:600; }
+  .cta:hover { background:#1d4ed8; }
+  .footer { font-size:.78rem; color:var(--muted); border-top:1px solid var(--line); padding-top:16px; margin-top:28px; }
+  .footer a { color:var(--accent); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Invoice due date &amp; late fee calculator</h1>
+  <div class="sub">Free, no signup. Works out your due date from net terms and how much late-payment interest you can charge.</div>
+
+  <div class="card">
+    <h2>1. Due date</h2>
+    <div class="grid">
+      <div>
+        <label>Invoice issue date</label>
+        <input id="issue" type="date">
+      </div>
+      <div>
+        <label>Payment terms</label>
+        <select id="terms">
+          <option value="7">Net 7</option>
+          <option value="14" selected>Net 14</option>
+          <option value="15">Net 15</option>
+          <option value="30">Net 30</option>
+          <option value="60">Net 60</option>
+          <option value="90">Net 90</option>
+          <option value="custom">Custom days…</option>
+        </select>
+      </div>
+      <div id="customWrap" style="display:none">
+        <label>Days until due</label>
+        <input id="customDays" type="number" min="1" value="30">
+      </div>
+    </div>
+    <div class="result" id="dueResult"></div>
+  </div>
+
+  <div class="card">
+    <h2>2. Late-payment interest</h2>
+    <div class="grid">
+      <div>
+        <label>Invoice amount</label>
+        <input id="amount" type="number" min="0" step="0.01" value="1000">
+      </div>
+      <div>
+        <label>Annual interest rate %</label>
+        <input id="rate" type="number" min="0" step="0.1" value="8">
+      </div>
+      <div>
+        <label>Days overdue</label>
+        <input id="overdue" type="number" min="0" step="1" value="14">
+      </div>
+    </div>
+    <div class="result" id="lateResult"></div>
+    <div class="note">Statutory late-payment interest and whether you may charge it depend on your contract and local law — this is a plain calculator, not legal advice.</div>
+  </div>
+
+  <a class="cta" href="/invoiceforge/">Ready to send it? Generate the invoice free →</a>
+
+  <div class="footer">
+    <b>Guides</b> · <a href="/invoiceforge/blog/how-to-invoice-as-a-freelancer.html">How to invoice as a freelancer</a> ·
+    <a href="/invoiceforge/blog/invoice-number-format.html">Invoice number format</a> ·
+    <a href="/invoiceforge/blog/free-invoice-template-for-freelancers.html">Free invoice template</a><br><br>
+    Made with <a href="/invoiceforge/">InvoiceForge</a> — free invoice generator for freelancers and small businesses.
+  </div>
+</div>
+<script>
+  function fmt(d) { return d.toLocaleDateString("en-GB", { weekday:"short", day:"numeric", month:"short", year:"numeric" }); }
+  function daysBetween(a, b) { return Math.round((b - a) / 864e5); }
+  function calcDue() {
+    const issue = new Date(document.getElementById("issue").value + "T12:00:00");
+    if (isNaN(issue)) return;
+    const t = document.getElementById("terms").value;
+    const customWrap = document.getElementById("customWrap");
+    customWrap.style.display = (t === "custom") ? "" : "none";
+    const days = t === "custom" ? (parseInt(document.getElementById("customDays").value) || 0) : parseInt(t);
+    const due = new Date(issue.getTime() + days * 864e5);
+    document.getElementById("dueResult").innerHTML =
+      `<div class="row"><span>Issue date</span><span>${fmt(issue)}</span></div>` +
+      `<div class="row"><span>Net terms</span><span>${t === "custom" ? days + " days" : "Net " + days}</span></div>` +
+      `<div class="row"><span>Due date</span><span class="big">${fmt(due)}</span></div>` +
+      `<div class="row"><span>Payment window</span><span>${days} days</span></div>`;
+  }
+  function calcLate() {
+    const amt = parseFloat(document.getElementById("amount").value) || 0;
+    const rate = parseFloat(document.getElementById("rate").value) || 0;
+    const days = parseFloat(document.getElementById("overdue").value) || 0;
+    const fee = amt * (rate / 100) * (days / 365);
+    document.getElementById("lateResult").innerHTML =
+      `<div class="row"><span>Invoice amount</span><span>${amt.toLocaleString("en-US",{style:"currency",currency:"USD"})}</span></div>` +
+      `<div class="row"><span>Interest (${rate}% p.a., ${days} days)</span><span>${fee.toLocaleString("en-US",{style:"currency",currency:"USD",maximumFractionDigits:2})}</span></div>` +
+      `<div class="row"><span>Total owed</span><span class="big">${(amt + fee).toLocaleString("en-US",{style:"currency",currency:"USD",maximumFractionDigits:2})}</span></div>`;
+  }
+  function recalc() { calcDue(); calcLate(); }
+  ["issue","terms","customDays","amount","rate","overdue"].forEach(id =>
+    document.getElementById(id).addEventListener("input", recalc));
+  document.getElementById("issue").value = new Date().toISOString().slice(0,10);
+  recalc();
+</script>
+</body>
+</html>

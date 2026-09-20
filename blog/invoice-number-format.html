@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Invoice Number Format: How to Choose an Invoice Numbering Scheme</title>
+<meta name="description" content="Compare sequential, date-based and client-code invoice number formats. Pros, cons, and why a consistent numbering scheme matters for accounting and tax.">
+<style>
+  :root { --ink: #111827; --accent: #2563eb; --muted: #4b5563; --line: #e5e7eb; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 0; background: #ffffff; color: #111827;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 17px; line-height: 1.65; -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 48px 24px 72px; }
+  .brand { font-size: 15px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 40px; }
+  .brand a { color: #2563eb; text-decoration: none; }
+  h1 { font-size: 34px; line-height: 1.25; letter-spacing: -0.02em; margin: 0 0 16px; color: #111827; }
+  h2 { font-size: 23px; line-height: 1.3; letter-spacing: -0.01em; margin: 40px 0 12px; color: #111827; }
+  h3 { font-size: 18px; margin: 26px 0 8px; color: #111827; }
+  p { margin: 0 0 18px; }
+  ul, ol { margin: 0 0 18px; padding-left: 22px; }
+  li { margin-bottom: 8px; }
+  a { color: #2563eb; text-decoration: underline; text-underline-offset: 2px; }
+  .lede { font-size: 19px; color: #4b5563; margin-bottom: 28px; }
+  .meta { font-size: 14px; color: #4b5563; margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid #e5e7eb; }
+  table { width: 100%; border-collapse: collapse; margin: 0 0 24px; font-size: 16px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid #e5e7eb; vertical-align: top; }
+  th { background: #f9fafb; font-size: 14px; text-transform: uppercase; letter-spacing: 0.04em; color: #4b5563; }
+  .cta {
+    margin: 44px 0 0; padding: 26px 26px 24px; border: 1px solid #e5e7eb;
+    border-left: 4px solid #2563eb; border-radius: 8px; background: #f9fafb;
+  }
+  .cta h2 { margin: 0 0 8px; font-size: 20px; }
+  .cta p { margin: 0 0 14px; font-size: 16px; color: #4b5563; }
+  .cta a.btn {
+    display: inline-block; background: #2563eb; color: #ffffff; text-decoration: none;
+    padding: 11px 20px; border-radius: 6px; font-weight: 600; font-size: 15px;
+  }
+  .note { font-size: 14px; color: #4b5563; border-top: 1px solid #e5e7eb; margin-top: 40px; padding-top: 20px; }
+  code { background: #f3f4f6; padding: 2px 5px; border-radius: 4px; font-size: 15px; }
+  footer { margin-top: 48px; font-size: 14px; color: #4b5563; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="brand"><a href="https://haswell119.github.io/invoiceforge">InvoiceForge</a></div>
+
+  <article>
+    <h1>Invoice Number Format: How to Choose a Numbering Scheme</h1>
+    <p class="meta">Sequential, date-based or client-code — how to pick one and stay consistent.</p>
+
+    <p class="lede">An invoice number looks like a trivial detail until the day you need to find one. A scheme you choose in five minutes and never break will save you real time at tax season, when a client queries a payment, or when an accountant asks you to reconcile a year of income.</p>
+
+    <h2>Why invoice numbers matter at all</h2>
+    <p>An invoice number is a unique identifier for a single invoice. It is how everyone who touches that invoice refers to it: you, your client, their accounts payable team, and your accountant. It is what lets a payment be matched to the document that caused it.</p>
+    <p>Two properties do almost all the work:</p>
+    <ul>
+      <li><strong>Uniqueness</strong> — no two invoices should ever share a number, not even across different years or clients.</li>
+      <li><strong>Traceability</strong> — you can look at a number and know roughly where it sits in your records.</li>
+    </ul>
+
+    <h2>The three common invoice number formats</h2>
+
+    <h3>1. Sequential numbering (001, 002, 003…)</h3>
+    <p>A single running sequence with no year or client in it — the simplest scheme, and the one most small businesses use.</p>
+    <ul>
+      <li><strong>Pros:</strong> trivially easy to maintain, guarantees uniqueness, and immediately shows gaps. If invoice 41 is missing from your records, you can see it.</li>
+      <li><strong>Cons:</strong> tells you nothing about date or client, and you must decide whether to restart at 001 each year — which costs you uniqueness — or carry one sequence forever, which is the safer choice.</li>
+    </ul>
+
+    <h3>2. Date-based numbering (2026-001, INV-2026-014)</h3>
+    <p>A year or full date prefix plus a counter. <code>2026-001</code> is the first invoice of 2026; <code>INV-20260115-03</code> is the third invoice issued on 15 January 2026.</p>
+    <ul>
+      <li><strong>Pros:</strong> the invoice date is in the number itself, so sorting, searching and year-by-year reconciliation are quick.</li>
+      <li><strong>Cons:</strong> you are managing a counter tied to a period, so year boundaries are easy to get wrong. A sequence that resets each year only stays unique if the year is always in the number.</li>
+    </ul>
+
+    <h3>3. Client-code numbering (ACME-001, 2026-ACME-004)</h3>
+    <p>A prefix identifying the client, plus a counter. Useful when you bill a handful of clients repeatedly.</p>
+    <ul>
+      <li><strong>Pros:</strong> you can find every invoice for one client instantly, and clients like seeing their own reference at a glance.</li>
+      <li><strong>Cons:</strong> uniqueness is now your responsibility across many small sequences, so it only works if you are disciplined about client codes. It also breaks down when a client changes name.</li>
+    </ul>
+
+    <h2>Comparing them at a glance</h2>
+    <table>
+      <thead>
+        <tr><th>Format</th><th>Example</th><th>Best for</th><th>Main risk</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Sequential</td><td>001, 002, 003</td><td>Most freelancers</td><td>No date or client information</td></tr>
+        <tr><td>Date-based</td><td>2026-001</td><td>Reconciling by year</td><td>Errors at the start of a year</td></tr>
+        <tr><td>Client-code</td><td>ACME-001</td><td>Few clients, repeat jobs</td><td>Duplicates across sequences</td></tr>
+      </tbody>
+    </table>
+    <p>A practical middle ground is a year prefix plus one continuous counter for the whole business: <code>2026-001</code>, <code>2026-002</code>, and so on. You get date context without fragmenting your numbering.</p>
+
+    <h2>Why consistency matters for tax and accounting</h2>
+    <p>Your invoice log is the record of your income. Accountants reconcile invoices to bank deposits, and tax authorities expect records to be complete and in sequence. That is where a tidy numbering scheme pays off:</p>
+    <ul>
+      <li><strong>Reconciliation.</strong> Matching a payment to an invoice is fast when numbers are unique and ordered. Without that you are matching by client name and amount, and duplicate amounts are common.</li>
+      <li><strong>Reviews.</strong> A continuous sequence that accounts for every number is the clearest answer to questions about your records; unexplained gaps invite more of them.</li>
+      <li><strong>Year-end filing.</strong> A date-based prefix lets you pull up a year's invoices without guessing where the previous year ended.</li>
+      <li><strong>Disputes.</strong> If a client claims they never received an invoice, the number and its place in your sequence settles it quickly.</li>
+    </ul>
+
+    <h2>Practical rules to follow</h2>
+    <ol>
+      <li><strong>Never reuse a number.</strong> If you make a mistake, void the invoice and issue a new one with a fresh number rather than overwriting the old document.</li>
+      <li><strong>Never renumber invoices you have already sent.</strong> The client's copy and yours must agree.</li>
+      <li><strong>Fix the format once and write it down</strong>, so next January you are not reinventing it.</li>
+      <li><strong>Keep a simple log</strong> of number, client, amount, date issued and date paid — one spreadsheet row each.</li>
+      <li><strong>Use leading zeros consistently</strong> (<code>001</code> rather than <code>1</code>) so records sort correctly.</li>
+      <li><strong>Check the rules where you are.</strong> Some jurisdictions set specific requirements for invoice numbering and record-keeping.</li>
+    </ol>
+
+    <div class="cta">
+      <h2>Apply your scheme without thinking about it</h2>
+      <p>InvoiceForge is a free, single-page invoice generator: enter your details and line items, then print or save the invoice as a PDF. No account required.</p>
+      <p><a class="btn" href="https://haswell119.github.io/invoiceforge">Open InvoiceForge</a></p>
+    </div>
+
+    <p class="note">This covers general invoicing practice, not tax or legal advice; numbering and record-keeping rules vary by jurisdiction. New to invoicing? Start with <a href="/invoiceforge/blog/how-to-invoice-as-a-freelancer.html">what to include on a freelancer invoice</a>.</p>
+  </article>
+
+  <footer>
+    <p><a href="https://haswell119.github.io/invoiceforge">InvoiceForge</a> — free online invoice generator. <a href="/invoiceforge/blog/how-to-invoice-as-a-freelancer.html">Related: how to invoice as a freelancer</a></p>
+  </footer>
+
+</div>
+</body>
+</html>

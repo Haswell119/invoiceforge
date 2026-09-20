@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>InvoiceForge — free invoice generator for freelancers</title>
+<meta name="description" content="Create a professional invoice in 30 seconds and print or save it as PDF. Free. No account. Pro removes branding and adds save/load.">
+<link rel="canonical" href="https://haswell119.github.io/invoiceforge/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="InvoiceForge — free invoice generator for freelancers">
+<meta property="og:description" content="Create a professional invoice in 30 seconds and print or save it as PDF. Free. No account.">
+<meta property="og:url" content="https://haswell119.github.io/invoiceforge/">
+<style>
+  :root { --ink:#111827; --muted:#6b7280; --accent:#2563eb; --line:#e5e7eb; --bg:#f9fafb; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; background:var(--bg); color:var(--ink); }
+  .app { display:grid; grid-template-columns:380px 1fr; min-height:100vh; }
+  .form { background:#fff; border-right:1px solid var(--line); padding:24px; overflow-y:auto; height:100vh; }
+  .preview { padding:32px; overflow-y:auto; height:100vh; }
+  .form h1 { font-size:1.2rem; margin-bottom:4px; }
+  .tagline { font-size:.8rem; color:var(--muted); margin-bottom:16px; }
+  label { display:block; font-size:.8rem; color:var(--muted); margin:12px 0 4px; }
+  input, textarea, select { width:100%; padding:8px 10px; border:1px solid var(--line); border-radius:6px; font-size:.9rem; background:#fff; }
+  .row { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .items { margin-top:16px; }
+  .item { display:grid; grid-template-columns:2fr 60px 80px 30px; gap:6px; margin-bottom:6px; }
+  .add { margin-top:8px; padding:6px 12px; background:var(--accent); color:#fff; border:0; border-radius:6px; cursor:pointer; }
+  .del { background:#fee2e2; color:#b91c1c; border:0; border-radius:6px; cursor:pointer; }
+  .print { position:sticky; bottom:16px; margin-top:16px; width:100%; padding:12px; background:var(--ink); color:#fff; border:0; border-radius:8px; font-size:1rem; cursor:pointer; }
+  .totals { margin-top:12px; font-size:.9rem; }
+  /* Pro banner */
+  .pro-banner { background:linear-gradient(135deg,#2563eb,#1e40af); color:#fff; padding:12px 16px; border-radius:8px; margin-bottom:16px; font-size:.85rem; line-height:1.5; }
+  .pro-banner a { color:#fff; font-weight:700; text-decoration:underline; }
+  .pro-banner .free-note { opacity:.85; font-size:.78rem; }
+  .pro-actions { display:flex; gap:8px; margin-top:8px; }
+  .pro-actions button { padding:6px 12px; border-radius:6px; border:1px solid #fff; background:transparent; color:#fff; cursor:pointer; font-size:.8rem; }
+  .pro-actions button.solid { background:#fff; color:#1e40af; border:0; font-weight:700; }
+  /* invoice sheet */
+  .sheet { background:#fff; max-width:760px; margin:0 auto; padding:40px; border:1px solid var(--line); border-radius:8px; box-shadow:0 1px 3px rgba(0,0,0,.06); position:relative; }
+  .sheet .top { display:flex; justify-content:space-between; }
+  .sheet h2 { font-size:1.5rem; }
+  .meta { text-align:right; color:var(--muted); font-size:.85rem; line-height:1.5; }
+  .parties { display:flex; justify-content:space-between; margin:28px 0; }
+  .parties div { font-size:.9rem; line-height:1.5; }
+  .parties .who { font-weight:600; margin-bottom:4px; }
+  table { width:100%; border-collapse:collapse; font-size:.9rem; }
+  th, td { text-align:left; padding:8px; border-bottom:1px solid var(--line); }
+  th { color:var(--muted); font-size:.75rem; text-transform:uppercase; letter-spacing:.04em; }
+  .num { text-align:right; }
+  .summary { display:flex; justify-content:flex-end; margin-top:16px; }
+  .summary table { width:280px; }
+  .summary td { border:0; padding:4px 8px; }
+  .grand { font-weight:700; font-size:1.05rem; border-top:2px solid var(--ink); }
+  .notes { margin-top:24px; color:var(--muted); font-size:.85rem; white-space:pre-wrap; }
+  .watermark { margin-top:28px; text-align:center; color:#9ca3af; font-size:.72rem; border-top:1px dashed var(--line); padding-top:12px; }
+  .watermark a { color:#9ca3af; }
+  .saved { margin-top:16px; }
+  .saved summary { cursor:pointer; font-size:.85rem; color:var(--muted); }
+  .saved ul { list-style:none; margin-top:8px; }
+  .saved li { display:flex; justify-content:space-between; gap:8px; padding:6px 8px; border:1px solid var(--line); border-radius:6px; margin-bottom:4px; font-size:.8rem; }
+  .saved li button { background:var(--accent); color:#fff; border:0; border-radius:4px; padding:3px 8px; cursor:pointer; font-size:.75rem; }
+  @media print { .form { display:none; } .preview { padding:0; height:auto; overflow:visible; } .sheet { border:0; box-shadow:none; } .watermark a { text-decoration:none; } }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="form">
+    <h1>InvoiceForge</h1>
+    <div class="tagline">Free invoice generator — print or save as PDF. No account.</div>
+    <div class="pro-banner" id="proBanner">
+      <div id="proBannerText">
+        <b>Get InvoiceForge Pro — $19 lifetime.</b> Remove the "Made with InvoiceForge" credit and save &amp; reload invoices.
+        <div class="free-note">The free version works forever with no limits on your invoices.</div>
+      </div>
+      <div class="pro-actions">
+        <a href="https://buy.stripe.com/fZu28tfk486dcxC8hVgUM04" target="_blank"><button class="solid" type="button">Upgrade — $19</button></a>
+        <button type="button" onclick="unlockPro()">I already bought →</button>
+      </div>
+    </div>
+    <label>Your business name</label><input id="biz" value="Acme Studio">
+    <label>Your address / email</label><input id="bizaddr" value="123 Main St · you@acme.com">
+    <div class="row">
+      <div><label>Client name</label><input id="client" value="Client Name"></div>
+      <div><label>Client address</label><input id="clientaddr" value="456 Client Ave"></div>
+    </div>
+    <div class="row">
+      <div><label>Invoice #</label><input id="num" value="INV-2026-001"></div>
+      <div><label>Issue date</label><input id="date" type="date"></div>
+    </div>
+    <div class="row">
+      <div><label>Due date</label><input id="due" type="date"></div>
+      <div><label>Currency</label><select id="cur"><option value="USD">$ USD</option><option value="EUR">€ EUR</option><option value="CHF">CHF</option><option value="GBP">£ GBP</option></select></div>
+    </div>
+    <div class="row">
+      <div><label>Tax rate %</label><input id="tax" type="number" value="0"></div>
+    </div>
+    <div class="items" id="items"></div>
+    <button class="add" onclick="addItem()">+ Add line item</button>
+    <label>Notes / payment terms</label><textarea id="notes" rows="3">Payment due within 14 days.</textarea>
+    <div class="saved" id="savedWrap" style="display:none">
+      <details class="saved"><summary>Saved invoices</summary><ul id="savedList"></ul></details>
+    </div>
+    <button class="print" onclick="saveInvoice();window.print()">Print / Save as PDF</button>
+    <div class="totals" id="totals"></div>
+    <div class="bloglinks" style="margin-top:20px;font-size:.78rem;color:var(--muted);border-top:1px solid var(--line);padding-top:12px;">
+      <b>Guides</b><br>
+      <a href="/invoiceforge/blog/how-to-invoice-as-a-freelancer.html" style="color:var(--accent)">How to invoice as a freelancer</a><br>
+      <a href="/invoiceforge/blog/invoice-number-format.html" style="color:var(--accent)">Invoice number format: how to choose a numbering scheme</a><br>
+      <a href="/invoiceforge/blog/free-invoice-template-for-freelancers.html" style="color:var(--accent)">Free invoice template for freelancers: what to put on it</a><br>
+      <a href="/invoiceforge/blog/invoice-generator-with-no-signup.html" style="color:var(--accent)">Invoice generator with no signup: what to check</a><br>
+      <a href="/invoiceforge/blog/self-employed-invoice-template.html" style="color:var(--accent)">Self-employed invoice template: the fields that get you paid</a><br>
+      <a href="/invoiceforge/blog/independent-contractor-invoice-template.html" style="color:var(--accent)">Independent contractor invoice template: what it must include</a><br>
+      <a href="/invoiceforge/due-date-calculator.html" style="color:var(--accent)">Invoice due date &amp; late fee calculator</a><br>
+      <b>Free invoice templates</b><br>
+      <a href="/invoiceforge/templates/photographer-invoice-template.html" style="color:var(--accent)">Photographer</a> ·
+      <a href="/invoiceforge/templates/consultant-invoice-template.html" style="color:var(--accent)">Consultant</a> ·
+      <a href="/invoiceforge/templates/contractor-invoice-template.html" style="color:var(--accent)">Contractor</a> ·
+      <a href="/invoiceforge/templates/plumber-invoice-template.html" style="color:var(--accent)">Plumber</a> ·
+      <a href="/invoiceforge/templates/electrician-invoice-template.html" style="color:var(--accent)">Electrician</a><br>
+      <a href="/invoiceforge/templates/cleaning-service-invoice-template.html" style="color:var(--accent)">Cleaning service</a> ·
+      <a href="/invoiceforge/templates/landscaper-invoice-template.html" style="color:var(--accent)">Landscaper</a> ·
+      <a href="/invoiceforge/templates/graphic-designer-invoice-template.html" style="color:var(--accent)">Graphic designer</a> ·
+      <a href="/invoiceforge/templates/web-developer-invoice-template.html" style="color:var(--accent)">Web developer</a><br>
+      <a href="/invoiceforge/templates/virtual-assistant-invoice-template.html" style="color:var(--accent)">Virtual assistant</a> ·
+      <a href="/invoiceforge/templates/tutor-invoice-template.html" style="color:var(--accent)">Tutor</a> ·
+      <a href="/invoiceforge/templates/freelance-writer-invoice-template.html" style="color:var(--accent)">Freelance writer</a><br>
+      <a href="/invoiceforge/templates/handyman-invoice-template.html" style="color:var(--accent)">Handyman</a> ·
+      <a href="/invoiceforge/templates/painter-invoice-template.html" style="color:var(--accent)">Painter</a> ·
+      <a href="/invoiceforge/templates/hvac-technician-invoice-template.html" style="color:var(--accent)">HVAC technician</a> ·
+      <a href="/invoiceforge/templates/roofer-invoice-template.html" style="color:var(--accent)">Roofer</a><br>
+      <a href="/invoiceforge/templates/locksmith-invoice-template.html" style="color:var(--accent)">Locksmith</a> ·
+      <a href="/invoiceforge/templates/moving-company-invoice-template.html" style="color:var(--accent)">Moving company</a> ·
+      <a href="/invoiceforge/templates/personal-trainer-invoice-template.html" style="color:var(--accent)">Personal trainer</a> ·
+      <a href="/invoiceforge/templates/hair-stylist-invoice-template.html" style="color:var(--accent)">Hair stylist</a><br>
+      <a href="/invoiceforge/templates/makeup-artist-invoice-template.html" style="color:var(--accent)">Makeup artist</a> ·
+      <a href="/invoiceforge/templates/dj-invoice-template.html" style="color:var(--accent)">DJ</a> ·
+      <a href="/invoiceforge/templates/bookkeeper-invoice-template.html" style="color:var(--accent)">Bookkeeper</a> ·
+      <a href="/invoiceforge/templates/caterer-invoice-template.html" style="color:var(--accent)">Caterer</a>
+    </div>
+    <div style="margin-top:16px;font-size:.72rem;color:#9ca3af;border-top:1px solid var(--line);padding-top:10px;">
+      Featured on <a href="https://listedstartups.com/products/invoiceforge" style="color:#9ca3af">ListedStartups</a> · <a href="https://startupproject.org/startups/" style="color:#9ca3af">The Startup Project</a> · <a href="https://twelve.tools" style="color:#9ca3af">Twelve Tools</a>
+    </div>
+  </div>
+  <div class="preview"><div class="sheet" id="sheet"></div></div>
+</div>
+<script src="presets.js"></script>
+<script>
+  const PRO_LINK = "https://buy.stripe.com/fZu28tfk486dcxC8hVgUM04";
+  const isPro = () => localStorage.getItem("invoiceforge_pro") === "1";
+  const items = [
+    { desc: "Design services", qty: 10, rate: 120 },
+    { desc: "Development", qty: 5, rate: 150 },
+  ];
+  function unlockPro() { localStorage.setItem("invoiceforge_pro", "1"); location.hash = "pro"; refreshProUI(); render(); }
+  function refreshProUI() {
+    if (isPro()) {
+      document.getElementById("proBanner").style.display = "none";
+    } else {
+      document.getElementById("proBanner").style.display = "";
+    }
+    document.getElementById("savedWrap").style.display = isPro() ? "" : "none";
+  }
+  // Payment-link redirect lands with ?pro=1 -> unlock
+  if (new URLSearchParams(location.search).get("pro") === "1") { localStorage.setItem("invoiceforge_pro","1"); }
+  function addItem() { items.push({ desc: "Item", qty: 1, rate: 0 }); render(); }
+  function del(i) { items.splice(i, 1); render(); }
+  function money(n) {
+    const cur = document.getElementById("cur").value;
+    try { return n.toLocaleString("en-US", { style: "currency", currency: cur }); }
+    catch(e) { return cur + " " + n.toFixed(2); }
+  }
+  function snapshot() {
+    return {
+      biz: document.getElementById("biz").value,
+      bizaddr: document.getElementById("bizaddr").value,
+      client: document.getElementById("client").value,
+      clientaddr: document.getElementById("clientaddr").value,
+      num: document.getElementById("num").value,
+      date: document.getElementById("date").value,
+      due: document.getElementById("due").value,
+      cur: document.getElementById("cur").value,
+      tax: document.getElementById("tax").value,
+      notes: document.getElementById("notes").value,
+      items: JSON.parse(JSON.stringify(items)),
+    };
+  }
+  function restore(s) {
+    document.getElementById("biz").value = s.biz;
+    document.getElementById("bizaddr").value = s.bizaddr;
+    document.getElementById("client").value = s.client;
+    document.getElementById("clientaddr").value = s.clientaddr;
+    document.getElementById("num").value = s.num;
+    document.getElementById("date").value = s.date;
+    document.getElementById("due").value = s.due;
+    document.getElementById("cur").value = s.cur;
+    document.getElementById("tax").value = s.tax;
+    document.getElementById("notes").value = s.notes;
+    items.splice(0, items.length, ...s.items);
+    render();
+  }
+  function saveInvoice() {
+    if (!isPro()) return;
+    const list = JSON.parse(localStorage.getItem("invoiceforge_saved") || "[]");
+    list.push(snapshot());
+    localStorage.setItem("invoiceforge_saved", JSON.stringify(list));
+    renderSaved();
+  }
+  function renderSaved() {
+    const list = JSON.parse(localStorage.getItem("invoiceforge_saved") || "[]");
+    document.getElementById("savedList").innerHTML = list.map((s, i) =>
+      `<li><span>${s.num} — ${s.client} (${money(s.items.reduce((t,it)=>t+it.qty*it.rate,0))})</span><span><button onclick="restore(JSON.parse(localStorage.getItem('invoiceforge_saved'))[${i}]);">Load</button></span></li>`
+    ).join("");
+  }
+  function render() {
+    const tax = parseFloat(document.getElementById("tax").value) || 0;
+    const subtotal = items.reduce((s, it) => s + it.qty * it.rate, 0);
+    const taxAmt = subtotal * tax / 100;
+    const total = subtotal + taxAmt;
+    let rows = items.map((it, i) =>
+      `<div class="item"><input value="${it.desc}" oninput="items[${i}].desc=this.value;render()">` +
+      `<input type="number" value="${it.qty}" oninput="items[${i}].qty=+this.value;render()">` +
+      `<input type="number" value="${it.rate}" oninput="items[${i}].rate=+this.value;render()">` +
+      `<button class="del" onclick="del(${i})">×</button></div>`).join("");
+    document.getElementById("items").innerHTML = rows;
+    document.getElementById("totals").innerHTML =
+      `Subtotal ${money(subtotal)} · Tax ${money(taxAmt)} · <b>Total ${money(total)}</b>`;
+    const sheet = document.getElementById("sheet");
+    const watermark = isPro() ? "" :
+      `<div class="watermark">Made with <a href="${PRO_LINK}" target="_blank">InvoiceForge</a> — <a href="${PRO_LINK}" target="_blank">remove with Pro ($19 lifetime)</a></div>`;
+    sheet.innerHTML = `
+      <div class="top">
+        <div><h2>${document.getElementById("biz").value}</h2>
+        <div style="color:#6b7280;font-size:.85rem">${document.getElementById("bizaddr").value}</div></div>
+        <div class="meta"><b>INVOICE</b><br># ${document.getElementById("num").value}<br>
+        Issued ${document.getElementById("date").value}<br>Due ${document.getElementById("due").value}</div>
+      </div>
+      <div class="parties">
+        <div><div class="who">Bill to</div>${document.getElementById("client").value}<br>${document.getElementById("clientaddr").value}</div>
+        <div><div class="who">From</div>${document.getElementById("biz").value}</div>
+      </div>
+      <table><thead><tr><th>Description</th><th class="num">Qty</th><th class="num">Rate</th><th class="num">Amount</th></tr></thead>
+      <tbody>${items.map(it => `<tr><td>${it.desc}</td><td class="num">${it.qty}</td><td class="num">${money(it.rate)}</td><td class="num">${money(it.qty * it.rate)}</td></tr>`).join("")}</tbody></table>
+      <div class="summary"><table>
+        <tr><td>Subtotal</td><td class="num">${money(subtotal)}</td></tr>
+        <tr><td>Tax (${tax}%)</td><td class="num">${money(taxAmt)}</td></tr>
+        <tr class="grand"><td>Total</td><td class="num">${money(total)}</td></tr>
+      </table></div>
+      <div class="notes">${document.getElementById("notes").value}</div>
+      ${watermark}`;
+  }
+  ["biz","bizaddr","client","clientaddr","num","date","due","tax","notes","cur"].forEach(id =>
+    document.getElementById(id).addEventListener("input", render));
+  // default dates
+  const today = new Date().toISOString().slice(0, 10);
+  document.getElementById("date").value = today;
+  document.getElementById("due").value = new Date(Date.now() + 14*864e5).toISOString().slice(0, 10);
+  // Profession template presets (?tpl=photographer etc.)
+  const tpl = new URLSearchParams(location.search).get("tpl");
+  if (tpl && window.INVOICEFORGE_PRESETS && window.INVOICEFORGE_PRESETS[tpl]) {
+    const p = window.INVOICEFORGE_PRESETS[tpl];
+    document.getElementById("biz").value = p.biz;
+    document.getElementById("bizaddr").value = "Your address / email";
+    document.getElementById("notes").value = p.notes;
+    items.splice(0, items.length, ...p.items.map(it => ({ desc: it[0], qty: it[1], rate: it[2] })));
+  }
+  refreshProUI();
+  renderSaved();
+  render();
+</script>
+</body>
+</html>
